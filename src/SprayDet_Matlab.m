@@ -1,10 +1,13 @@
-function SprayDet_Matlab
+% Use this file to initialize the parameters for your case
+
+
+function [t,y,M] = SprayDet_Matlab
 
 addpath(genpath('/home/njt14003/Cantera/cantera-build/lib/cantera/matlab/toolbox'))
 addpath('details');
 
 % Most common parameters
-phi     = 0.7;
+phi     = 1.0;
 Cdw     = 0.00;
 Chw     = 0.00;
 Rd0     = 5e-6;
@@ -19,7 +22,7 @@ mech    = 'Heptane.cti';
 lchar   = 3.81*0.01/4;
 Pr      = 1;
 Le      = 1;
-Tw      = 298.15;
+Tw      = T0;
 Cvd     = 2236;
 rhod    = 680;
 Length  = 0.2;
