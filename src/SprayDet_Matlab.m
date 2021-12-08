@@ -3,7 +3,6 @@
 
 function [t,y,M] = SprayDet_Matlab
 
-addpath(genpath('/home/njt14003/Cantera/cantera-build/lib/cantera/matlab/toolbox'))
 addpath('details');
 
 % Most common parameters

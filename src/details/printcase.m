@@ -4,11 +4,16 @@ function printcase(vars)
 
 fprintf('SprayDetonation-minisolver\n');
 fprintf('	Copyright (c) 2021 Nicolas Tricard\n');
-fprintf('	Please cite: "One dimensional steady-state modeling\n');
+fprintf('	Please cite:\n'); 
+fprintf('		"One dimensional steady-state modeling\n');
 fprintf('	of spray detonations considering loss effects"\n');
-fprintf('	Nicolas Tricard, Xinyu Zhao\n');
+fprintf('	Nicolas Tricard, Xinyu Zhao'
+fprintf('		"Heterogeneous effects on the propagation\n');
+fprintf('	and quenching of spray detonations" Tianfeng Lu\n');
+fprintf('	and Chung Law\n');
 fprintf('\nCase Setup:\n');
 fprintf('	Fuel		  = %s\n',fuel);
+fprintf('	Det Velocity      = %.2f [m/s]\n',D);
 fprintf('	Droplet radius    = %.3e [m]\n',Rd0);
 fprintf('	Equivalence Ratio = %.2f [-]\n',phi);
 fprintf('	Drag coefficient  = %.2f [-]\n',Cdw);
