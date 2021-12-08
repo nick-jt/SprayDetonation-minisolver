@@ -2,7 +2,6 @@ function SprayDet_Matlab
 
 addpath(genpath('/home/njt14003/Cantera/cantera-build/lib/cantera/matlab/toolbox'))
 addpath('details');
-addpath('mechanisms');
 
 % Most common parameters
 phi     = 0.7;
@@ -35,13 +34,14 @@ q       = fuel + ":" + string(phi*(1-alpha)) ...
 	+ ", O2:" + string(a) ...
 	+ ", N2:" + string(a*3.76);
     
+U0 = 1750;
 vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
-Tw Cvd rhod nu0 U0 lam alpha Length...
-fuel phi mech char(q) gas};
+	Tw Cvd rhod nu0 U0 lam alpha Length...
+	fuel phi mech char(q) gas};
+
 
 [t,y,M] = integrator(U0,vars);
 
 rmpath('details');
-rmpath('mechanisms');
 
 end
