@@ -44,7 +44,7 @@ vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
 % Solving IVP
 options = odeset('OutputFcn',@(t,y,flag) myoutputfunc(t,y,flag,gas),...
     'NonNegative',[1,2,4,6]);%,'RelTol',1e-10,'AbsTol',1e-12);
-[t,y] = ode113(@(t,y) statevectorfunction(t,y,vars), Lspan, y0, options);
+[t,y] = ode15s(@(t,y) statevectorfunction(t,y,vars), Lspan, y0, options);
 
 M = zeros(length(t),1);
 for i = 1:length(t)
