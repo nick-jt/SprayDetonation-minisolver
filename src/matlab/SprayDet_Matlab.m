@@ -44,11 +44,9 @@ vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 
 printcase(vars);
 
-
-[SS_Cdw1,t1,y1,M1] = getSSvelocity(1500,1900,vars,1);
-vars{5} = 0.0;
-vars{15} = 0.0;
-[SS_Cdw2,t2,y2,M2] = getSSvelocity(1500,1900,vars,1);
+[t,y,M] = integrator(U0,vars);
+%[SS_Cdw,t,y,M] = bracketMethodCDW(V,CDWlow,CDWhigh,vars,fileout)
+%[SS_Velocity,t,y,M] = getSSvelocity(1500,1900,vars,1);
 
 
 rmpath('details');

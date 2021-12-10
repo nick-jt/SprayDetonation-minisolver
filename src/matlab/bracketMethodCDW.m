@@ -1,5 +1,5 @@
 
-function SS_Cdw = bracketMethodCDW(V,CDWlow,CDWhigh,vars,fileout)
+function [SS_Cdw,t,y,M] = bracketMethodCDW(V,CDWlow,CDWhigh,vars,fileout)
 
 iter = 0;
 while abs(CDWlow-CDWhigh)>1e-4
@@ -9,7 +9,7 @@ while abs(CDWlow-CDWhigh)>1e-4
     fprintf(fileout,"Iter %d CDW=%f",iter,CDW);
     vars{3} = CDW;
     
-    [t,~,M] = integrator(V,vars);
+    [t,y,M] = integrator(V,vars);
     
     
     if (t(end)<vars{16} || (t(end)>=vars{16} && M(end)>0.99))

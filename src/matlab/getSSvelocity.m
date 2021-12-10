@@ -1,4 +1,4 @@
-function [SS_Cdw,t,y,M] = getSSvelocity(Vlow,Vhigh,vars,fileout)
+function [SS_velocity,t,y,M] = getSSvelocity(Vlow,Vhigh,vars,fileout)
 
 iter = 0;
 while abs(Vlow-Vhigh)>1e-4
@@ -20,5 +20,5 @@ while abs(Vlow-Vhigh)>1e-4
 
 end
 
-SS_Cdw = (Vlow+Vhigh)/2;
+SS_velocity = (Vlow+Vhigh)/2;
 end
