@@ -42,6 +42,7 @@ vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 	fuel phi mech char(q) gas};
 
 
+printcase(vars);
 [t,y,M] = integrator(U0,vars);
 
 rmpath('details');

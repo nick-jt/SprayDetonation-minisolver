@@ -1,7 +1,6 @@
 
 function [t,y,M]=integrator(U0,vars)
 
-printcase(vars);
 
 [Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
     lam, alpha, Length, fuel, phi, mech, q, gas] = vars{1:end};
@@ -47,7 +46,6 @@ options = odeset('OutputFcn',@(t,y,flag) myoutputfunc(t,y,flag,gas),...
     'NonNegative',[1,2,4,6]);%,'RelTol',1e-10,'AbsTol',1e-12);
 [t,y] = ode113(@(t,y) statevectorfunction(t,y,vars), Lspan, y0, options);
 
-extras = zeros(length(t),2);
 M = zeros(length(t),1);
 for i = 1:length(t)
     set(gas,'T',y(i,1),'Rho',y(i,2),'Y',y(i,7:end));

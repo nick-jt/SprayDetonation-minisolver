@@ -7,7 +7,7 @@ fprintf('	Copyright (c) 2021 Nicolas Tricard\n');
 fprintf('	Please cite:\n'); 
 fprintf('		"One dimensional steady-state modeling\n');
 fprintf('	of spray detonations considering loss effects"\n');
-fprintf('	Nicolas Tricard, Xinyu Zhao'
+fprintf('	Nicolas Tricard, Xinyu Zhao\n');
 fprintf('		"Heterogeneous effects on the propagation\n');
 fprintf('	and quenching of spray detonations" Tianfeng Lu\n');
 fprintf('	and Chung Law\n');
