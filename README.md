@@ -25,4 +25,4 @@ plot(x,y(:,1))
 ```
 
 ## Case conditions
-SprayDet_Matlab.m contains most of the relevant parameters for your detonation. Change equivalence ratio, droplet loading, droplet diameter, external loss coefficients, initial conditions, etc... You may also use the bracketMethodCDW.m file to iterate to determine the drag coefficient for a given case condition.
+SprayDet_Matlab.m contains most of the relevant parameters for your detonation. Change equivalence ratio, droplet loading, droplet diameter, external loss coefficients, initial conditions, etc... You may also use the bracketMethodCDW.m file to iterate to determine the drag coefficient for a given case condition. You may also use getSSvelocity.m to iterate for the detonation steady state velocity given case conditions.
