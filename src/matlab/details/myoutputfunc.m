@@ -2,7 +2,7 @@ function status = myoutputfunc(~,y,flag,gas)
 
 status = 0;
 
-if flag ~= strcmp(flag,'init') | strcmp(flag,'done')
+if strcmp(flag,'init') || strcmp(flag,'done')
 else % after every timestep
     set(gas,'T',y(1),'Rho',y(2),'Y',y(7:end));
     c = soundspeed(gas);
@@ -12,5 +12,4 @@ else % after every timestep
         status = 1;
     end
 end
-
 end

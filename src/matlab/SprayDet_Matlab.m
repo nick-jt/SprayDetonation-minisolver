@@ -1,13 +1,14 @@
 % Use this file to initialize the parameters for your case
 
 
-function [t,y,M] = SprayDet_Matlab
+function [t,y,M,extras] = SprayDet_Matlab
+clear
 
 addpath('details');
 
 % Most common parameters
 phi     = 1.0;
-Cdw     = 0.00;
+Cdw     = 0.02;
 Chw     = 0.00;
 Rd0     = 5e-6;
 alpha   = 1;
@@ -36,7 +37,7 @@ q       = fuel + ":" + string(phi*(1-alpha)) ...
 	+ ", O2:" + string(a) ...
 	+ ", N2:" + string(a*3.76);
     
-U0 = 1750;
+U0 = 1800;
 vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 	Tw Cvd rhod nu0 U0 lam alpha Length...
 	fuel phi mech char(q) gas};
@@ -48,6 +49,50 @@ printcase(vars);
 %[SS_Cdw,t,y,M] = bracketMethodCDW(V,CDWlow,CDWhigh,vars,fileout)
 %[SS_Velocity,t,y,M] = getSSvelocity(1500,1900,vars,1);
 
+
+[Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
+    lam, alpha, Length, fuel, phi, mech, q, gas] = vars{1:end};
+
+% Initialize the gas
+set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
+rho0 = density(gas);
+
+% Calculate number density (modifies gas state)
+if (Rd0>0 && alpha>0)
+    nd = getnumden(gas,alpha,phi,rhod,Rd0,fuel,rho0);
+else
+    nd = 0;
+end
+
+% Initialize the gas
+set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
+ 
+% Calculate Postshock Conditions
+%gas = PostShock_fr( U0, Pg0, Tg0, char(q), mech );
+gas = postshockstate( U0, Pg0, Tg0, char(q), mech );
+lam = thermalConductivity(gas);
+
+% IVP initial conditions
+Tg1 = temperature(gas);
+Rhog1 = density(gas);
+Ug1 = rho0*U0/Rhog1;
+Td1 = Tg0;
+Ud1 = U0;
+Rd1 = Rd0;
+Yg1 = massFractions(gas);
+
+% Initializing
+nu0 = nd*Ud1;
+vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
+    lam, alpha, Length, fuel, phi, mech, q, gas};
+
+
+extras = zeros(length(t),6);
+for i = 1:length(t)
+    extras(i,:) = getQsrcterms(t,y(i,:),vars);
+end
+
+area(t,extras)
 
 rmpath('details');
 

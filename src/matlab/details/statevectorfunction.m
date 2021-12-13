@@ -46,9 +46,7 @@ conv    = ( 1 + 0.276*Re^0.5*Pr^0.5 );
 wnf     = sum(w_k(2:end).*Yg(2:end))/sum(Yg(2:end)); % TODO
 M       = ug/soundspeed(gas);
 
- 
 %% Droplet Empirical Equations
-
 if (rd>1e-2*Rd0)
     
     % Latent Heat of Vaporization
