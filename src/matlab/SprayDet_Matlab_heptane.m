@@ -1,6 +1,5 @@
 % Use this file to initialize the parameters for your case
 
-
 function [t,y,M,extras] = SprayDet_Matlab
 clear
 
@@ -10,17 +9,21 @@ addpath('details');
 phi     = 1.0;
 Cdw     = 0.02;
 Chw     = 0.00;
-Rd0     = 5e-6;
+Rd0     = 10e-6;
 alpha   = 1;
 T0      = 298.15;
 P0      = 1e5;
 fuel    = 'C7H16';     % Change parameters if this changes
 mech    = 'Heptane.cti';
 
+% Droplet related parameters
+satpressure = @(Td) 10^(4.02832-1268.636/(Td-56.199))*100000; % Antoine Equation
+latheat = @(Td,wf) 53.66*exp(-0.2831*Td/540.2)*(1-Td/540.2)^0.2831/wf*1e6;
+dropCv = @(Td,w) 2236;
 
 % Parameters
 lchar   = 3.81*0.01/4;
-Pr      = 1;
+Pr      = 0.72;
 Le      = 1;
 Tw      = T0;
 Cvd     = 2236;
@@ -34,14 +37,13 @@ C_count = nAtoms(gas,fuel,'C');
 H_count = nAtoms(gas,fuel,'H');
 a       = C_count + 0.25 * H_count;			
 q       = fuel + ":" + string(phi*(1-alpha)) ...
-	+ ", O2:" + string(a) ...
-	+ ", N2:" + string(a*3.76);
-    
-U0 = 1800;
+        + ", O2:" + string(a) ...
+        + ", N2:" + string(a*3.76);
+
+U0 = 1805;
 vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 	Tw Cvd rhod nu0 U0 lam alpha Length...
-	fuel phi mech char(q) gas};
-
+	fuel phi mech char(q) gas satpressure latheat dropCv};
 
 printcase(vars);
 
@@ -51,7 +53,8 @@ printcase(vars);
 
 
 [Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
-    lam, alpha, Length, fuel, phi, mech, q, gas] = vars{1:end};
+    lam, alpha, Length, fuel, phi, mech, q, gas...
+    , satpressure, latheat, dropCv] = vars{1:end};
 
 % Initialize the gas
 set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
@@ -68,7 +71,6 @@ end
 set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
  
 % Calculate Postshock Conditions
-%gas = PostShock_fr( U0, Pg0, Tg0, char(q), mech );
 gas = postshockstate( U0, Pg0, Tg0, char(q), mech );
 lam = thermalConductivity(gas);
 
@@ -84,7 +86,8 @@ Yg1 = massFractions(gas);
 % Initializing
 nu0 = nd*Ud1;
 vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
-    lam, alpha, Length, fuel, phi, mech, q, gas};
+    lam, alpha, Length, fuel, phi, mech, q, gas...
+    , satpressure, latheat, dropCv};
 
 
 extras = zeros(length(t),6);
@@ -92,7 +95,9 @@ for i = 1:length(t)
     extras(i,:) = getQsrcterms(t,y(i,:),vars);
 end
 
-area(t,extras)
+if (size(t)==1)
+    error("size(t)=1")
+end
 
 rmpath('details');
 

@@ -6,6 +6,9 @@ a       = C_count + 0.25 * H_count; % Air stoichiometric coefficient
 q       = fuel + ":" + string(phi) ...
             + ", O2:" + string(a) ...
             + ", N2:" + string(a*3.76); % TODO
+% q       = fuel + ":" + string(phi) ...
+%             + ", O2:" + string(a);
+
 set(gas,'X',char(q));
 Y = massFractions(gas);
 fuel_index = speciesIndex(gas,fuel);

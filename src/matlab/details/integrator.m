@@ -2,8 +2,9 @@
 function [t,y,M]=integrator(U0,vars)
 
 
-[Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
-    lam, alpha, Length, fuel, phi, mech, q, gas] = vars{1:end};
+[Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D, lam ...
+    , alpha, Length, fuel, phi, mech, q, gas...
+    , satpressure, latheat, dropCv] = vars{1:end};
 
 % Initialize the gas
 set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
@@ -20,7 +21,6 @@ end
 set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
  
 % Calculate Postshock Conditions
-%gas = PostShock_fr( U0, Pg0, Tg0, char(q), mech );
 gas = postshockstate( U0, Pg0, Tg0, char(q), mech );
 lam = thermalConductivity(gas);
 
@@ -39,11 +39,11 @@ Lspan = [0 Length];
 y0 = [ Tg1; Rhog1; Ug1; Td1; Ud1; Rd1; Yg1 ];
 
 vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
-    lam, alpha, Length, fuel, phi, mech, q, gas};
+    lam, alpha, Length, fuel, phi, mech, q, gas, satpressure, latheat, dropCv};
 
 % Solving IVP
 options = odeset('OutputFcn',@(t,y,flag) myoutputfunc(t,y,flag,gas),...
-    'NonNegative',[1,2,4,6]);%,'RelTol',1e-10,'AbsTol',1e-12);
+    'NonNegative',1:6,'RelTol',1e-5,'AbsTol',1e-8);
 [t,y] = ode15s(@(t,y) statevectorfunction(t,y,vars), Lspan, y0, options);
 
 M = zeros(length(t),1);

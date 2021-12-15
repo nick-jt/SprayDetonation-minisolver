@@ -2,20 +2,12 @@ function [dydx,extras] = statevectorfunction(t,y,vars)
 %% Basic variables
 
 
-if (y(1)<0) y(1)=1;
-elseif (isnan(y(1))) y(1)=1;
-end
-
-if (y(2)<0) y(2)=1;
-elseif (isnan(y(2))) y(2)=1;
-end
-
 % Unpacking evolution values
 Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
 Yg = y(7:end);
  
 [~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, Cvd, rhod, nu0, D,...
-    lam, ~, ~, fuel, ~, ~, ~, gas] = vars{1:end};
+    lam, ~, ~, fuel, ~, ~, ~, gas, satpressure, latheat, dropCv] = vars{1:end};
  
 % Get vapor enthalpy at droplet temperature
 fuel_index = speciesIndex(gas,fuel);
@@ -49,16 +41,10 @@ M       = ug/soundspeed(gas);
 %% Droplet Empirical Equations
 if (rd>1e-2*Rd0)
     
-    % Latent Heat of Vaporization
-    A = 53.66; B = 0.2831; Tc = 540.2;
-    Tr = Td/Tc; 
-    L = A*exp(-B*Tr) * (1-Tr)^B;
-    L = L / wf * 1000 * 1000; % J/kg(fuel) TODO
-
-    % Vaporization Rate (Antoine Equation)
-    % pfs2 = satPressure(gas,Tg); 
-    A = 4.02832; B = 1268.636; C = -56.199;
-    pfs = 10^(A - B/(Td + C)) * 100000;
+    pfs = satpressure(Td);
+    L = latheat(Td,wf);
+    Cvd = dropCv(Td,w);
+    
     Xfs = pfs/pressure(gas);
     Yfs = Xfs*wf/(Xfs*wf+(1-Xfs)*wnf);
     By = (Yfs-Yg(fuel_index))/(1-Yfs);
