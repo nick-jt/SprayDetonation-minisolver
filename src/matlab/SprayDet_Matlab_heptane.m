@@ -1,6 +1,6 @@
 % Use this file to initialize the parameters for your case
 
-function [t,y,M,extras] = SprayDet_Matlab
+function [t,y,M,extras] = SprayDet_Matlab_heptane
 clear
 
 addpath('details');

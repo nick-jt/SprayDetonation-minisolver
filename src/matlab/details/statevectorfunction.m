@@ -8,7 +8,7 @@ Yg = y(7:end);
  
 [~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, Cvd, rhod, nu0, D,...
     lam, ~, ~, fuel, ~, ~, ~, gas, satpressure, latheat, dropCv] = vars{1:end};
- 
+
 % Get vapor enthalpy at droplet temperature
 fuel_index = speciesIndex(gas,fuel);
 w_k = molecularWeights(gas);
@@ -22,7 +22,7 @@ end
 
 % Reset gas state
 set(gas,'T',Tg,'Rho',rhog,'Y',Yg);
- 
+
 % Gas Parameters
 Cpg     = cp_mass(gas);
 w       = meanMolecularWeight(gas);
@@ -39,8 +39,8 @@ wnf     = sum(w_k(2:end).*Yg(2:end))/sum(Yg(2:end)); % TODO
 M       = ug/soundspeed(gas);
 
 %% Droplet Empirical Equations
-if (rd>1e-2*Rd0)
-    
+if (rd>1e-2*Rd0 && nu0>0)
+   
     pfs = satpressure(Td);
     L = latheat(Td,wf);
     Cvd = dropCv(Td,w);
@@ -57,7 +57,7 @@ if (rd>1e-2*Rd0)
     
     % Droplet Radius
     drddx = -mdotv/(rhod*4*pi*rd^2*nu0);
-
+ 
     % Droplet Velocity
     duddx = -fd/(rhod*nu0*4/3*pi*rd^3);
 

@@ -1,16 +1,16 @@
 % Use this file to initialize the parameters for your case
 
-function [t,y,M,extras] = SprayDet_Matlab
+function [t,y,M,extras] = SprayDet_Matlab_JP10
 clear
 
 addpath('details');
 
 % Most common parameters
 phi     = 1.0;
-Cdw     = 0.02;
+Cdw     = 0.00;
 Chw     = 0.00;
-Rd0     = 5e-6;
-alpha   = 1;
+Rd0     = 0;
+alpha   = 0;
 T0      = 298.15;
 P0      = 1e5;
 fuel    = 'C10H16';     % Change parameters if this changes
@@ -37,12 +37,12 @@ gas     = Solution(mech);
 C_count = nAtoms(gas,fuel,'C');
 H_count = nAtoms(gas,fuel,'H');
 a       = C_count + 0.25 * H_count;			
-q       = fuel + ":" + string(phi*(1-alpha)) ...
-	+ ", O2:" + string(a) ...
-	+ ", N2:" + string(a*3.76);
-    
 % q       = fuel + ":" + string(phi*(1-alpha)) ...
-% 	+ ", O2:" + string(a);
+% 	+ ", O2:" + string(a) ...
+% 	+ ", N2:" + string(a*3.76);
+    
+q       = fuel + ":" + string(phi*(1-alpha)) ...
+        + ", O2:" + string(a);
 
 U0 = 1770;
 vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
@@ -51,9 +51,9 @@ vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 
 printcase(vars);
 
-[t,y,M] = integrator(U0,vars);
-%[SS_Cdw,t,y,M] = bracketMethodCDW(V,CDWlow,CDWhigh,vars,fileout)
-% [SS_Velocity,t,y,M] = getSSvelocity(1800,2500,vars,1);
+% [t,y,M] = integrator(U0,vars);
+% [SS_Cdw,t,y,M] = bracketMethodCDW(V,CDWlow,CDWhigh,vars,fileout)
+[SS_Velocity,t,y,M] = getSSvelocity(1900,2500,vars,1);
 
 
 [Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...

@@ -1,7 +1,7 @@
 
 function [t,y,M]=integrator(U0,vars)
-
-
+ 
+ 
 [Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D, lam ...
     , alpha, Length, fuel, phi, mech, q, gas...
     , satpressure, latheat, dropCv] = vars{1:end};
