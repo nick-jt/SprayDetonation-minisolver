@@ -6,7 +6,7 @@ function [extras] = getQsrcterms(t,y,vars)
 % Unpacking evolution values
 Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
 Yg = y(7:end)';
- 
+
 [~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, Cvd, rhod, nu0, D,...
     lam, ~, ~, fuel, ~, ~, ~, gas, satpressure, latheat, dropCv] = vars{1:end};
  
@@ -100,8 +100,10 @@ Ydk = zeros(nSpecies(gas),1);
 Ydk(fuel_index) = 1;
 dYgdx = 1/(rhog*ug) * (omega.*w_k+mdotv*(Ydk-Yg));
 
-extras = [fw*D,-qw,fd*ud,-qd,mdotv*hgf_Td,mdotv*ud^2/2];
-dydx = [dTgdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
+
+HRR = -netProdRates(gas)'*enthalpies_RT(gas)*gasconstant*Tg;
+
+extras = [HRR,-qw,fd*ud,-qd,mdotv*hgf_Td,mdotv*ud^2/2];
 end
 
 

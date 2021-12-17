@@ -6,13 +6,13 @@ function [dydx,extras] = statevectorfunction(t,y,vars)
 Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
 Yg = y(7:end);
  
-[~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, Cvd, rhod, nu0, D,...
+[~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, ~, rhod, nu0, D,...
     lam, ~, ~, fuel, ~, ~, ~, gas, satpressure, latheat, dropCv] = vars{1:end};
 
 % Get vapor enthalpy at droplet temperature
 fuel_index = speciesIndex(gas,fuel);
 w_k = molecularWeights(gas);
-if (rd>1e-2*Rd0)
+if (rd>1e-2*Rd0 && nu0>0)
     set(gas,'T',Td,'Rho',rhog,'Y',Yg);
     enth = enthalpies_RT(gas)*gasconstant*Td/w_k(fuel_index);
     hgf_Td = enth(fuel_index);
@@ -69,8 +69,8 @@ else
 end 
     
 %% Wall Losses
-fw = Cdw/l_char * rhog * abs(D-ug)*(D-ug)/2;
-qw = Chw/l_char * rhog*abs(D-ug)*Cpg*(Tg-Tw);
+fw = Cdw/l_char * rhog * abs(D-ug) * (D-ug)/2;
+qw = Chw/l_char * rhog * abs(D-ug) * Cpg * (Tg-Tw);
 
 %% Evolution parameters
 
