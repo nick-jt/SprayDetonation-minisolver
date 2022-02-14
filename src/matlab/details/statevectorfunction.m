@@ -33,10 +33,12 @@ gamma   = Cpg/cv_mass(gas);
 grs     = gamma/(gamma-1);
 wf      = w_k(fuel_index);
 nd      = nu0/ud;
-Re      = rhog * abs(ud-ug) * 2*rd/viscosity(gas);
+mu	= viscosity(gas);
+Re      = rhog * abs(ud-ug) * 2*rd/mu;
 conv    = ( 1 + 0.276*Re^0.5*Pr^0.5 );
 wnf     = sum(w_k(2:end).*Yg(2:end))/sum(Yg(2:end)); % TODO
-M       = ug/soundspeed(gas);
+c	= soundspeed(gas);
+M       = ug/c;
 
 %% Droplet Empirical Equations
 if (rd>1e-2*Rd0 && nu0>0)
@@ -49,9 +51,9 @@ if (rd>1e-2*Rd0 && nu0>0)
     Yfs = Xfs*wf/(Xfs*wf+(1-Xfs)*wnf);
     By = (Yfs-Yg(fuel_index))/(1-Yfs);
     Bh = Cpg*(Tg-Td)/L;
-    CDd = 22*Re^-1 * conv;
+    CDd = dragcoefficient(y,mu,c);
 
-    fd = nd*CDd*4*pi*rd^2*rhog*abs(ud-ug)*(ud-ug)/2;
+    fd = nd*CDd*pi*rd^2*rhog*abs(ud-ug)*(ud-ug)/2;
     mdotv = nd*4*pi*rd*lam/(Le*Cpg) * log(1+By)*conv;
     qd = nd*4*pi*rd*lam/Cpg*log(1+Bh)*conv*L;
     
