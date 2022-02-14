@@ -1,6 +1,6 @@
 % Use this file to initialize the parameters for your case
 
-function [SS_Cdws,Vtests] = SprayDet_Dodecane
+function [x,y,D] = SprayDet_Dodecane
 clear
 
 addpath('details');
@@ -10,10 +10,10 @@ phi     = 1.0;		% equivalence ratio
 Cdw     = 0.00;		% wall drag coefficient
 Chw     = 0.00;		% wall heat loss coefficient
 Rd0     = 2.5e-6; 	% drop Radius
-alpha   = 0;		% droplet loading
+alpha   = 1;		% droplet loading (kg liquid fuel/kg total fuel)
 T0      = 298;		% initial temp (K)
 P0      = 1e5;		% initial pressure (pa)
-fuel    = 'C12H26';     % Change below parameters if this changes
+fuel    = 'NC12H26';     % Change below parameters if this changes
 mech    = 'Dodecane.cti';
 
 % Droplet related parameters
@@ -54,7 +54,7 @@ printcase(vars);
 %     fprintf("%f\n",Vtests(i));
 %    [SS_Cdws(i),~,~,~] = bracketMethodCDW(U0,0,0.1,vars,1);
 % end
-[SS_Velocity,t,y,M] = getSSvelocity(1500,2000,vars,1);
+[SS_Velocity,x,y,M] = getSSvelocity(1500,2000,vars,1);
 
 
 % [Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
@@ -103,6 +103,8 @@ printcase(vars);
 % if (size(t)==1)
 %     error("size(t)=1")
 % end
+
+D = SS_Velocity;
 
 rmpath('details');
 

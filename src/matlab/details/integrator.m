@@ -43,7 +43,7 @@ vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
 
 % Solving IVP
 options = odeset('OutputFcn',@(t,y,flag) myoutputfunc(t,y,flag,gas),...
-    'NonNegative',1:6,'RelTol',1e-5,'AbsTol',1e-8);
+    'NonNegative',1:6+nSpecies(gas));%,'RelTol',1e-5,'AbsTol',1e-8);
 [t,y] = ode15s(@(t,y) statevectorfunction(t,y,vars), Lspan, y0, options);
 
 M = zeros(length(t),1);

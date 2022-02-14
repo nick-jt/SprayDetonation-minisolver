@@ -9,7 +9,7 @@ Yg = y(7:end);
 [~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, ~, rhod, nu0, D,...
     lam, ~, ~, fuel, ~, ~, ~, gas, satpressure, latheat, dropCv] = vars{1:end};
 
-% Get vapor enthalpy at droplet temperature
+% Use gas state to get vapor enthalpy at droplet temperature and mole fractions without fuel
 fuel_index = speciesIndex(gas,fuel);
 w_k = molecularWeights(gas);
 if (rd>1e-2*Rd0 && nu0>0)
@@ -18,6 +18,17 @@ if (rd>1e-2*Rd0 && nu0>0)
     hgf_Td = enth(fuel_index);
 else
     hgf_Td = 0;
+end
+
+% Mean molecular weight with no fuel
+fidx = speciesIndex(gas,fuel);
+if (massFraction(gas,fidx)>0)
+	Yg_nofuel = Yg;
+	Yg_nofuel(fidx) = 0;
+	set(gas,'T',Tg,'Rho',rhog,'Y',Yg);
+	wnf = meanMolecularWeight(gas);
+else
+	wnf = meanMolecularWeight(gas);
 end
 
 % Reset gas state
@@ -36,7 +47,6 @@ nd      = nu0/ud;
 mu	= viscosity(gas);
 Re      = rhog * abs(ud-ug) * 2*rd/mu;
 conv    = ( 1 + 0.276*Re^0.5*Pr^0.5 );
-wnf     = sum(w_k(2:end).*Yg(2:end))/sum(Yg(2:end)); % TODO
 c	= soundspeed(gas);
 M       = ug/c;
 

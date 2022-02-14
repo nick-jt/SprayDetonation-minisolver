@@ -4,7 +4,7 @@ function [Cd]=dragcoefficient(y,mu,c) % state vector, viscosity, soundspeed
 	rhog 	= y(2);
 	ug 	= y(3);
 	ud	= y(5);
-	rd	= y(6);
+	Rd	= y(6);
 
 	%% See "Compressibility and Rarefaction Effects on Drag of a Spherical Particle" Loth
 
