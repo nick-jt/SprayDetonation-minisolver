@@ -8,7 +8,7 @@ function [Cd]=dragcoefficient(y,mu,c) % state vector, viscosity, soundspeed
 
 	%% See "Compressibility and Rarefaction Effects on Drag of a Spherical Particle" Loth
 
-	Re = 2*Rd*(ud-ug)*rhog/mu;	% Reynolds Num
+	Re = 2*Rd*abs(ud-ug)*rhog/mu;	% Reynolds Num
 	Ma = abs(ud-ug)/c;		% Relative Mach num
 
 	% Empirical correlation
