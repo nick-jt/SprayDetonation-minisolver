@@ -1,6 +1,6 @@
 % Use this file to initialize the parameters for your case
 
-function [x,y,D] = SprayDet_Dodecane
+function [x,y] = SprayDet_Dodecane
 clear
 
 addpath('details');
@@ -40,14 +40,14 @@ q       = fuel + ":" + string(phi*(1-alpha)) ...
         + ", O2:" + string(a) ...
         + ", N2:" + string(a*3.76);
 
-U0 = 1500;
+U0 = 1750;
 vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 	Tw Cvd rhod nu0 U0 lam alpha Length...
 	fuel phi mech char(q) gas satpressure latheat dropCv};
 
 printcase(vars);
 
-% [t,y,M] = integrator(U0,vars);
+%[x,y,M] = integrator(U0,vars);
 % Vtests = linspace(1200,1800,20);
 % SS_Cdws = zeros(1,length(Vtests));
 % for i=1:length(Vtests)
@@ -104,7 +104,7 @@ printcase(vars);
 %     error("size(t)=1")
 % end
 
-D = SS_Velocity;
+%D = SS_Velocity;
 
 rmpath('details');
 
