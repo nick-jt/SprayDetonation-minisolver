@@ -66,7 +66,7 @@ if (rd>1e-2*Rd0 && nu0>0)
     P = pressure(gas);
     if ~exist('taum','var')
         Xeq = 101325/P * exp(Lv/(R/wf)*(1/Tb-1/Td));
-        Xeq = min(1-1e-10,Xeq);
+        Xeq = min(1-1e-3,Xeq);
         Yeq = Xeq / (Xeq + (1-Xeq)*w/wf);
         By = (Yeq - massFraction(gas,fuel)) / (1 - Yeq);
         Sh = 2+0.552*Re^0.5*Pr^(1/3);
@@ -75,21 +75,27 @@ if (rd>1e-2*Rd0 && nu0>0)
     end
     beta = rhod*Cpf*(rd*2)^2/(12*kf*taum); % TODO get film temp
     Lk = kf/(Le*Cpf)*sqrt(2*pi*Td*R/wf)/P;
-    Xeq = 101325/P * exp(Lv/(R/wf)*(1/Tb-1/Td));
-    Xeq = min(1-1e-10,Xeq);
+    Xeq = 101325/P * exp(Lv/(R/wf)*(1/Tb-1/Td)); 
+    Xeq = min(1-1e-3,Xeq);
     Xneq = Xeq - Lk/rd*beta;
-    fprintf("%f %f %f %f\n",Xeq,Lk,beta,rd);
+    %fprintf("%f %f %f %f\n",Xeq,Lk,beta,rd);
     Yneq = Xneq / (Xneq + (1-Xneq)*w/wf);
+    Yneq = min(1-1e-3,Yneq);
     By = (Yneq - massFraction(gas,fuel)) / (1 - Yneq);
     taum1 =  (4*rd^2)*rhod/(6*Sh*kf/(Le*Cpf)*log(1+By));
     mdotv = nd*4*pi*rd*lam/(Le*Cpg) * log(1+By)*conv;
     taum = taum1;
+    
+    % Heat Transfer
+    Prf = Cpf*viscosity(gas)/kf;
+    Nu = 2 + 0.552*Re^0.5*Prf^(1/3);
+    taut = 2*taum*(exp(beta)-1)/Nu * Cvd/Cpf;
+    dTddx = 1/(taut*ud)*(Tg-Td-2*Lv/Cpf*(exp(beta)-1)/Nu);
+    qd = dTddx*(rhod*nd*4/3*pi*rd^3*ud*Cvd) + mdotv*Lv;
      
+    % Momentum Transfer
     CDd = dragcoefficient(y,mu,c);
     fd = nd*CDd*pi*rd^2*rhog*abs(ud-ug)*(ud-ug)/2;
-    
-    Bh = Cpg*(Tg-Td)/Lv;
-    qd = nd*4*pi*rd*lam/Cpg*log(1+Bh)*conv*Lv;
     
     % Droplet Radius
     drddx = -mdotv/(rhod*4*pi*rd^2*nu0);
@@ -98,7 +104,7 @@ if (rd>1e-2*Rd0 && nu0>0)
     duddx = -fd/(rhod*nu0*4/3*pi*rd^3);
 
     % Droplet Temperature
-    dTddx = (qd-mdotv*Lv)/(rhod*nu0*4/3*pi*rd^3*Cvd);
+    %dTddx = (qd-mdotv*Lv)/(rhod*nu0*4/3*pi*rd^3*Cvd);
     
 else
     [fd,mdotv,qd,drddx,duddx,dTddx] = deal(0);

@@ -17,6 +17,8 @@ else
     nd = 0;
 end
 
+fprintf("Droplet number density = %s\n",nd);
+
 % Initialize the gas
 set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
  
