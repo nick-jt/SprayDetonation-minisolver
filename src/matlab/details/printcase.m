@@ -1,4 +1,4 @@
-function printcase(vars)
+function printcase(vars,funcflag)
 [Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
     lam, alpha, Length, fuel, phi, mech, q, gas] = vars{1:end};
 
@@ -20,5 +20,15 @@ fprintf('	Drag coefficient  = %.2f [-]\n',Cdw);
 fprintf('	Heat loss coeff   = %.2f [-]\n',Chw);
 fprintf('	T0		  = %.2f [K]\n',Tg0);
 fprintf('	P0		  = %.2e [Pa]\n',Pg0);
+
+if (funcflag==1)
+	fprintf("Determining steady state velocity\n");
+elseif (funcflag==2)
+	fprintf("Integrating with provided velocity %f\n",D);
+elseif (funcflag==3)
+	fprintf("Calculating SS drag coefficient\n");
+else
+	error("Unknown value for funcflag in CaseSetup");
+end
 
 end

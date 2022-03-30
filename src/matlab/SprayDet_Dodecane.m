@@ -1,34 +1,15 @@
 % Use this file to initialize the parameters for your case
 
 function [x,y,M] = SprayDet_Dodecane
-clear
 
 addpath('details');
 
-% Most common parameters
-phi     = 1.0;		% equivalence ratio
-Cdw     = 0.00;		% wall drag coefficient
-Chw     = 0.00;		% wall heat loss coefficient
-Rd0     = 5e-6; 	% drop Radius
-alpha   = 1;		% droplet loading (kg liquid fuel/kg total fuel)
-T0      = 420;		% initial temp (K)
-P0      = 101325;		% initial pressure (pa)
-fuel    = 'NC12H26';     % Change below parameters if this changes
-mech    = 'Dodecane.cti';
+C = CaseSetup;
+[funcflag,U0,phi,Cdw,Chw,Rd0,alpha,T0,P0,fuel,mech,satpressure,latheat,dropCv...
+	,lchar,Pr,Le,Tw,rhod,Length] = C.vars{1:end};
+Cvd = dropCv(0,0); % Dodecane this value doesnt matter
 
-% Droplet related parameters
-satpressure = nan;
-latheat = @(Td,wf) 260628; % J/kg
-dropCv = @(Td,w) 2766.0;
 
-% Parameters
-lchar   = 3.81*0.01/4;
-Pr      = 1;
-Le      = 1;
-Tw      = T0;
-Cvd     = 0;
-rhod    = 750;
-Length  = 0.2;
 nu0     = 0;
 lam     = 0;
 
@@ -40,22 +21,21 @@ q       = fuel + ":" + string(phi*(1-alpha)) ...
         + ", O2:" + string(a) ...
         + ", N2:" + string(a*3.76);
 
-U0 = 1803.260803;
 vars = {T0 P0 Cdw Chw Rd0 lchar Pr Le...
 	Tw Cvd rhod nu0 U0 lam alpha Length...
 	fuel phi mech char(q) gas satpressure latheat dropCv};
 
-printcase(vars);
+printcase(vars,funcflag);
 
-%[x,y,M] = integrator(U0,vars);
-% Vtests = linspace(1200,1800,20);
-% SS_Cdws = zeros(1,length(Vtests));
-% for i=1:length(Vtests)
-%     fprintf("%f\n",Vtests(i));
-%    [SS_Cdws(i),~,~,~] = bracketMethodCDW(U0,0,0.1,vars,1);
-% end
-[SS_Velocity,x,y,M] = getSSvelocity(1500,2000,vars,1);
-
+if (funcflag==1)
+	[U0,x,y,M] = getSSvelocity(1500,2000,vars,1);
+elseif (funcflag==2)
+	[x,y,M] = integrator(U0,vars);
+elseif (funcflag==3)
+	[SS_Cdws(i),~,~,~] = bracketMethodCDW(U0,0,0.1,vars,1);
+else
+	error("Unknown value for funcflag in CaseSetup");
+end
 
 
 %%%%%%%%%Post processing
@@ -92,20 +72,22 @@ Yg1 = massFractions(gas);
 
 % Initializing
 nu0 = nd*Ud1;
-vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
+vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, U0,...
 	lam, alpha, Length, fuel, phi, mech, q, gas...
 	, satpressure, latheat, dropCv};
 
 
-extras = zeros(length(x),6);
+extras = zeros(length(x),3);
 for i = 1:length(x)
-	extras(i,:) = getQsrcterms(x,y(i,:),vars);
+	extras(i,:) = postprocess(x,y(i,:),vars);
 end
 
+intmdotvdx = trapz(x,extras(:,3));
+fprintf("delta(rho*u)=%f integral(mdotv,dx)=%f\n",y(end,2)*y(end,3)-rho0*U0,intmdotvdx)
+
 if (size(x)==1)
-	error("size(x)=1")
+	error("size(x)=1");
 end
-%end postprocessing
 
 rmpath('details');
 
@@ -114,7 +96,7 @@ fileout = fopen(filename,'w');
 
 fprintf(fileout,"X[m], Tg[K], Pg[Pa], Rhog[kg/m^3], Rd[m], Yf, Ug[m/s], HRR\n");
 for i=1:length(x)
-	fprintf(fileout,"%.10f %f %f %f %e %e %f %e\n",x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),extras(i,1))
+	fprintf(fileout,"%.10f %f %f %f %e %e %f %e\n",x(i),extras(i,2),y(i,1),y(i,2),y(i,6),y(i,6+29),y(i,3),extras(i,1));
 end
 
 end

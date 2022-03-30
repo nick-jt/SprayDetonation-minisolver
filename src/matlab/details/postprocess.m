@@ -1,4 +1,4 @@
-function [dydx] = statevectorfunction(t,y,vars)
+function [extras] = statevectorfunction(t,y,vars)
 %% Basic variables
 
 % Unpacking evolution values
@@ -143,6 +143,9 @@ Ydk = zeros(nSpecies(gas),1);
 Ydk(fuel_index) = 1;
 dYgdx = 1/(rhog*ug) * (omega.*w_k+mdotv*(Ydk-Yg));
 
-dydx = [dPdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
+
+
+HRR = -netProdRates(gas)'*enthalpies_RT(gas)*gasconstant*Tg;
+extras = [HRR,Tg,mdotv];
 
 end
