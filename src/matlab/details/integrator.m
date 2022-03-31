@@ -25,7 +25,7 @@ gas = postshockstate( U0, Pg0, Tg0, char(q), mech );
 lam = thermalConductivity(gas);
 
 % IVP initial conditions
-P1 = pressure(gas);
+Tg1 = temperature(gas);
 Rhog1 = density(gas);
 Ug1 = rho0*U0/Rhog1;
 Td1 = Tg0;
@@ -36,7 +36,7 @@ Yg1 = massFractions(gas);
 % Initializing
 nu0 = nd*Ud1;
 Lspan = [0 Length];
-y0 = [ P1; Rhog1; Ug1; Td1; Ud1; Rd1; Yg1 ];
+y0 = [ Tg1; Rhog1; Ug1; Td1; Ud1; Rd1; Yg1 ];
 
 vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
     lam, alpha, Length, fuel, phi, mech, q, gas, satpressure, latheat, dropCv};
@@ -48,7 +48,7 @@ options = odeset('OutputFcn',@(t,y,flag) myoutputfunc(t,y,flag,gas),...
 
 M = zeros(length(t),1);
 for i = 1:length(t)
-    set(gas,'P',y(i,1),'Rho',y(i,2),'Y',y(i,7:end));
+    set(gas,'T',y(i,1),'Rho',y(i,2),'Y',y(i,7:end));
     M(i) = y(i,3)/soundspeed(gas);
 end
 

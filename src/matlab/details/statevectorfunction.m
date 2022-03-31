@@ -2,7 +2,7 @@ function [dydx] = statevectorfunction(t,y,vars)
 %% Basic variables
 
 % Unpacking evolution values
-P = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
+Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
 Yg = y(7:end);
  
 [~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, ~, rhod, nu0, D,...
@@ -10,12 +10,12 @@ Yg = y(7:end);
 
 
 % set gas state
-set(gas,'P',P,'Rho',rhog,'Y',Yg);
+set(gas,'T',Tg,'Rho',rhog,'Y',Yg);
 
 % Gas Parameters
 fuel_index = speciesIndex(gas,fuel);
 w_k 	= molecularWeights(gas);
-Tg 	= temperature(gas);
+P 	= pressure(gas);
 Cpg     = cp_mass(gas);
 w       = meanMolecularWeight(gas);
 hg_k    = enthalpies_RT(gas)*gasconstant*Tg./w_k;
@@ -140,10 +140,10 @@ sonicity = 1-M^2;
 dugdx = drop_thermicity/sonicity;
 
 % Gas Temperature
-%dTgdx = -ug/Cpg*dugdx + 1/(rhog*ug*Cpg) * ...
-%    (fw*D + fd*ud - sum(hg_k.*omega.*w_k) - qw - qd ...
-%    + mdotv*((ud^2-ug^2)/2 - enthalpy_from_vaporization));
-dPdx = -rhog*ug*dugdx+fw+fd+mdotv*(ud-ug);
+dTgdx = -ug/Cpg*dugdx + 1/(rhog*ug*Cpg) * ...
+    (fw*D + fd*ud - sum(hg_k.*omega.*w_k) - qw - qd ...
+    + mdotv*((ud^2-ug^2)/2 - enthalpy_from_vaporization));
+%dPdx = -rhog*ug*dugdx+fw+fd+mdotv*(ud-ug);
 
 % Gas Density
 drhogdx = -rhog/ug*dugdx + mdotv/ug;
@@ -153,6 +153,6 @@ Ydk = zeros(nSpecies(gas),1);
 Ydk(fuel_index) = 1;
 dYgdx = 1/(rhog*ug) * (omega.*w_k+mdotv*(Ydk-Yg));
 
-dydx = [dPdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
+dydx = [dTgdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
 
 end

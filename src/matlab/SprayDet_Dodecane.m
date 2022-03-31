@@ -96,7 +96,7 @@ fileout = fopen(filename,'w');
 
 fprintf(fileout,"X[m], Tg[K], Pg[Pa], Rhog[kg/m^3], Rd[m], Yf, Ug[m/s], HRR\n");
 for i=1:length(x)
-	fprintf(fileout,"%.10f %f %f %f %e %e %f %e\n",x(i),extras(i,2),y(i,1),y(i,2),y(i,6),y(i,6+29),y(i,3),extras(i,1));
+	fprintf(fileout,"%.10f %f %f %f %e %e %f %e\n",x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),extras(i,1));
 end
 
 end
