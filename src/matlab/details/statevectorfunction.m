@@ -10,13 +10,16 @@ Yg = y(7:end);
 
 % set gas state
 try
+	if (sum(Yg>1)) 
+        	error("Mass fraction exceeds 1: sum(Yg)=%f",sum(Yg));
+    	end
 	set(gas,'T',Tg,'Rho',rhog,'Y',Yg);
 catch ERROR
-	fprintf(['ERROR: ' ERROR.message]);
+	fprintf(['ERROR: \n\t' ERROR.message]);
 	fprintf("	ending run and outputting data");
 	dydx=zeros(length(y),1);
-	extras=zeros(5,1);;
-	return
+	extras=zeros(5,1);
+	rethrow(ERROR)
 end
 
 % Gas Parameters
@@ -72,6 +75,7 @@ if (rd>1e-3*Rd0 && nu0>0)
     
     % film temp properties TODO
     Twb = 137*(Tb/373.15)^0.68 * log10(Tg) - 45;
+    Twb = Twb + 10;
     set(gas,'T',Twb,'Rho',rhog,'Y',Yg);
     Cpf = cp_mass(gas);
     kf = thermalConductivity(gas);
