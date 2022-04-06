@@ -6,10 +6,10 @@ classdef CaseSetup %% Here you can define parameters for your case
 	% 2 = take provided velocity and calculate detonation structure (may not be SS ZND solution)
 	% 3 = take provided velocity and obtain steady state drag coefficient
 
-	funcflag = 1;
+	funcflag = 2;
 
 	% Most common parameters
-	U0 	= 1790; 	% Detonation velocity (treated differently based on funcflag)
+	U0 	= 2093.1; 	% Detonation velocity (treated differently based on funcflag)
 	phi     = 1.0;		% equivalence ratio
 	Cdw     = 0.00;		% wall drag coefficient
 	Chw     = 0.00;		% wall heat loss coefficient

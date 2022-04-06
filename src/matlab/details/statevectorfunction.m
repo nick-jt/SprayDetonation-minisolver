@@ -1,5 +1,4 @@
-function [dydx] = statevectorfunction(t,y,vars)
-%% Basic variables
+function [dydx,extras] = statevectorfunction(t,y,vars)
 
 % Unpacking evolution values
 Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
@@ -10,7 +9,15 @@ Yg = y(7:end);
 
 
 % set gas state
-set(gas,'T',Tg,'Rho',rhog,'Y',Yg);
+try
+	set(gas,'T',Tg,'Rho',rhog,'Y',Yg);
+catch ERROR
+	fprintf(['ERROR: ' ERROR.message]);
+	fprintf("	ending run and outputting data");
+	dydx=zeros(length(y),1);
+	extras=zeros(5,1);;
+	return
+end
 
 % Gas Parameters
 fuel_index = speciesIndex(gas,fuel);
@@ -45,15 +52,19 @@ fidx = speciesIndex(gas,fuel);
 if (massFraction(gas,fidx)>0)
 	Yg_nofuel = Yg;
 	Yg_nofuel(fidx) = 0;
-	set(gas,'P',P,'Rho',rhog,'Y',Yg);
+	set(gas,'P',P,'Rho',rhog,'Y',Yg_nofuel);
 	wnf = meanMolecularWeight(gas);
 else
 	wnf = meanMolecularWeight(gas);
 end
 
+global liquid_vaporized_flag;
 
 %% Droplet Empirical Equations
 if (rd>1e-3*Rd0 && nu0>0)
+
+    liquid_vaporized_flag = 0;
+
     Tb = 489;
 
     Lv = latheat(Td,wf);
@@ -114,6 +125,18 @@ if (rd>1e-3*Rd0 && nu0>0)
     
 else
     [fd,mdotv,qd,drddx,duddx,dTddx] = deal(0);
+    if ( liquid_vaporized_flag == 0)
+	% Dump remaining fuel into gas mixture
+	
+	addedmass = zeros(1,nSpecies(gas));
+	addedmass(fuel_index) = 4/3*pi*rd^3*nd*rhod/rhog;
+	for i=1:nSpecies(gas)
+		Yf_new = (Yg(i)+addedmass(i))/(1+addedmass(fuel_index));
+	end
+    end
+
+
+    liquid_vaporized_flag = 1;
 end 
 
 % Resetting gas state
@@ -154,5 +177,10 @@ Ydk(fuel_index) = 1;
 dYgdx = 1/(rhog*ug) * (omega.*w_k+mdotv*(Ydk-Yg));
 
 dydx = [dTgdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
+
+HRR = -netProdRates(gas)'*enthalpies_RT(gas)*gasconstant*Tg;
+ER = 0;
+extras = [HRR, P, mdotv, ER, nd];
+
 
 end

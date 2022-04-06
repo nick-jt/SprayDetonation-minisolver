@@ -2,7 +2,7 @@ function [SS_velocity,t,y,M] = getSSvelocity(Vlow,Vhigh,vars,fileout)
 
 iter = 0;
 L = inf;
-while abs(Vlow-Vhigh)>1e-2 || L<vars{16}
+while abs(Vlow-Vhigh)>5e-1 || L<vars{16}
 
     iter = iter + 1;
     Vmid = (Vlow+Vhigh)/2;
