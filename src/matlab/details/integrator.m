@@ -1,4 +1,3 @@
-
 function [t,y,M]=integrator(U0,vars)
  
  

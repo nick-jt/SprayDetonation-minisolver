@@ -75,7 +75,6 @@ if (rd>1e-3*Rd0 && nu0>0)
     
     % film temp properties TODO
     Twb = 137*(Tb/373.15)^0.68 * log10(Tg) - 45;
-    Twb = Twb + 10;
     set(gas,'T',Twb,'Rho',rhog,'Y',Yg);
     Cpf = cp_mass(gas);
     kf = thermalConductivity(gas);

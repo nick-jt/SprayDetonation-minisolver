@@ -1,5 +1,4 @@
 % Use this file to initialize the parameters for your case
-
 function [x,y,M] = SprayDet_Dodecane
 
 addpath('details');
@@ -57,12 +56,13 @@ end
 
 % Re-initialize the gas
 set(gas, 'T', Tg0, 'P', Pg0, 'X', char(q));
+fprintf("I.C.: T=%f P=%f rho=%f U=%f nd=%f\n",temperature(gas),pressure(gas),density(gas),U0,nd);
 
 % Calculate Postshock Conditions
 gas = postshockstate( U0, Pg0, Tg0, char(q), mech );
+fprintf("Postshock: T=%f P=%f rho=%f\n",temperature(gas),pressure(gas),density(gas));
 lam = thermalConductivity(gas);
 
-% IVP initial conditions
 Tg1 = temperature(gas);
 Rhog1 = density(gas);
 Ug1 = rho0*U0/Rhog1;
@@ -93,7 +93,7 @@ rmpath('details');
 
 filename = sprintf("spray_R%.2e_T%.2f_P%.2f_Phi%.2f_%s.dat",Rd0,T0,P0,phi,fuel);
 fileout = fopen(filename,'w');
-fprintf(fileout,"X[m], Tg[K], Pg[Pa], Rhog[kg/m^3], Rd[m], Yf, Ug[m/s], HRR\n");
+fprintf(fileout,"X[m] Tg[K] Pg[Pa] Rhog[kg/m^3] Rd[m] Yf Ug[m/s] HRR\n");
 for i=1:length(x)
 	fprintf(fileout,"%.10f %f %f %f %e %e %f %e\n",x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),extras(i,1));
 end

@@ -10,7 +10,7 @@ q       = fuel + ":" + string(phi) ...
 %             + ", O2:" + string(a);
 
 set(gas,'X',char(q));
-Y = massFractions(gas);
+Y = massFractions(gas)
 fuel_index = speciesIndex(gas,fuel);
 Ynf = Y; Ynf(fuel_index) = [];
 
