@@ -76,9 +76,9 @@ nu0 = nd*Ud1;
 vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, U0,...
 	lam, alpha, Length, fuel, phi, mech, q, gas...
 	, satpressure, latheat, dropCv};
-extras = zeros(length(x),5);
+extras = zeros(length(x),9);
 for i = 1:length(x)
-	[~,extras(i,:)] = statevectorfunction(x,y(i,:)',vars);
+	[~,extras(i,:)] = statevectorfunction(x,y(i,:)',vars,1);
 end
 
 % Confirmed mass conservation
@@ -93,9 +93,12 @@ rmpath('details');
 
 filename = sprintf("spray_R%.2e_T%.2f_P%.2f_Phi%.2f_%s.dat",Rd0,T0,P0,phi,fuel);
 fileout = fopen(filename,'w');
-fprintf(fileout,"X[m] Tg[K] Pg[Pa] Rhog[kg/m^3] Rd[m] Yf Ug[m/s] HRR\n");
+fprintf(fileout,"X[m] Tg[K] Pg[Pa] Rhog[kg/m^3] Rd[m] Yf Ug[m/s] HRR ER ReacMassConsump[kg/m^3/s] VaporMassProd[kg/m^3/s] DiffTimescale[s] VaporTimescale[s] TimeReqdToVap1kg[s/kg]\n");
 for i=1:length(x)
-	fprintf(fileout,"%.10f %f %f %f %e %e %f %e\n",x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),extras(i,1));
+	fprintf(fileout,"%.10f %f %f %f %e %e %f %e %f %e %f %e %e %e\n",...
+		x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),...
+		extras(i,1),extras(i,4),extras(i,5),extras(i,6),extras(i,7),...
+		extras(i,8),extras(i,9));
 end
 
 end

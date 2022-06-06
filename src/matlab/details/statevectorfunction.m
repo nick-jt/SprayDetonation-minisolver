@@ -1,4 +1,4 @@
-function [dydx,extras] = statevectorfunction(t,y,vars)
+function [dydx,extras] = statevectorfunction(t,y,vars,extras_flag)
 
 % Unpacking evolution values
 Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
@@ -127,17 +127,16 @@ if (rd>1e-3*Rd0 && nu0>0)
     %dTddx = (qd-mdotv*Lv)/(rhod*nu0*4/3*pi*rd^3*Cvd);
     
 else
-    [fd,mdotv,qd,drddx,duddx,dTddx] = deal(0);
+    [fd,mdotv,qd,drddx,duddx,dTddx,taum] = deal(0);
     if ( liquid_vaporized_flag == 0)
 	% Dump remaining fuel into gas mixture
-	
 	addedmass = zeros(1,nSpecies(gas));
 	addedmass(fuel_index) = 4/3*pi*rd^3*nd*rhod/rhog;
 	for i=1:nSpecies(gas)
-		Yf_new = (Yg(i)+addedmass(i))/(1+addedmass(fuel_index));
+		Y_new = (Yg(i)+addedmass(i))/(1+addedmass(fuel_index));
 	end
     end
-
+    %set(gas,'Y',Y_new);
 
     liquid_vaporized_flag = 1;
 end 
@@ -179,11 +178,33 @@ Ydk = zeros(nSpecies(gas),1);
 Ydk(fuel_index) = 1;
 dYgdx = 1/(rhog*ug) * (omega.*w_k+mdotv*(Ydk-Yg));
 
+% Evolution Terms
 dydx = [dTgdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
 
-HRR = -netProdRates(gas)'*enthalpies_RT(gas)*gasconstant*Tg;
-ER = 0;
-extras = [HRR, P, mdotv, ER, nd];
-
+% Extra data for postprocessing
+if (extras_flag)
+	tauR_OF = 0;
+	HRR = -netProdRates(gas)'*enthalpies_RT(gas)*gasconstant*Tg;
+	nCtot=0;nHtot=0;nOtot=0;
+	%stoich_coefficients = stoich_r(gas);
+	for i=1:nSpecies(gas)
+		X = moleFraction(gas,speciesName(gas,i));
+		nC = nAtoms(gas,i,'C');
+		nH = nAtoms(gas,i,'H');
+		nO = nAtoms(gas,i,'O');
+		nCtot = nCtot + nC * X;
+		nHtot = nHtot + nH * X;
+		nOtot = nOtot + nO * X;
+	end
+	ER = (2*nCtot+0.5*nHtot)/nOtot; % TODO verify
+	volume_frac = nd*4/3*pi*rd^3;
+	droploading = 1/(1+rhog*Yg(fuel_index)/(volume_frac*rhod));
+	ReacFuelCons = omega(fuel_index)*wf;
+	VaporFuelProd = mdotv*(Ydk(fuel_index)-Yg(fuel_index));
+	DiffTau = rd^2/max(mixDiffCoeffs(gas));
+	VaporTau = taum;
+	TimeForVapor1kg = taum/(4/3*pi*rd^3*rhod*nd);
+	extras = [HRR, P, mdotv, ER, ReacFuelCons, VaporFuelProd, DiffTau, VaporTau, TimeForVapor1kg]; % ode solver will ignore but can be used for postprocessing
+end
 
 end

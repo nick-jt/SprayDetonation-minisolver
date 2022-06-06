@@ -44,7 +44,7 @@ vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, D,...
 options = odeset('OutputFcn',@(t,y,flag) myoutputfunc(t,y,flag,gas),...
     'NonNegative',1:6+nSpecies(gas));%,'RelTol',1e-5,'AbsTol',1e-8);
 try 
-	[t,y] = ode15s(@(t,y) statevectorfunction(t,y,vars), Lspan, y0, options);
+	[t,y] = ode15s(@(t,y) statevectorfunction(t,y,vars,0), Lspan, y0, options);
 catch ERROR
 	rethrow(ERROR);
 end
