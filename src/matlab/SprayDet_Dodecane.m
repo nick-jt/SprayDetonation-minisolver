@@ -1,5 +1,6 @@
 % Use this file to initialize the parameters for your case
 function [x,y,M] = SprayDet_Dodecane
+tic
 
 addpath('details');
 
@@ -76,10 +77,11 @@ nu0 = nd*Ud1;
 vars = {Tg0, Pg0, Cdw, Chw, Rd0, lchar, Pr, Le, Tw, Cvd, rhod, nu0, U0,...
 	lam, alpha, Length, fuel, phi, mech, q, gas...
 	, satpressure, latheat, dropCv};
-extras = zeros(length(x),9);
+extras = zeros(length(x),11);
 for i = 1:length(x)
 	[~,extras(i,:)] = statevectorfunction(x,y(i,:)',vars,1);
 end
+fprintf("here")
 
 % Confirmed mass conservation
 intmdotvdx = trapz(x,extras(:,3));
@@ -93,12 +95,13 @@ rmpath('details');
 
 filename = sprintf("spray_R%.2e_T%.2f_P%.2f_Phi%.2f_%s.dat",Rd0,T0,P0,phi,fuel);
 fileout = fopen(filename,'w');
-fprintf(fileout,"X[m] Tg[K] Pg[Pa] Rhog[kg/m^3] Rd[m] Yf Ug[m/s] HRR ER ReacMassConsump[kg/m^3/s] VaporMassProd[kg/m^3/s] DiffTimescale[s] VaporTimescale[s] TimeReqdToVap1kg[s/kg]\n");
+fprintf(fileout,"X[m] Tg[K] Pg[Pa] Rhog[kg/m^3] Rd[m] Yf Ug[m/s] HRR ER DiffTimescale[s] VaporTimescale[s] MinTimescale[s] CO_timescale[s] OH_timescale[s] Fuel_timescale[s] Temp_timescale[s]\n");
 for i=1:length(x)
-	fprintf(fileout,"%.10f %f %f %f %e %e %f %e %f %e %f %e %e %e\n",...
-		x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),...
-		extras(i,1),extras(i,4),extras(i,5),extras(i,6),extras(i,7),...
-		extras(i,8),extras(i,9));
+	fprintf(fileout,"%.10f %f %f %f %e %e %f %e %f %e %f %e %e %e %e %e\n",...
+		x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),... %7
+		extras(i,1),extras(i,4),extras(i,5),extras(i,6),extras(i,7),... %5
+		extras(i,8),extras(i,9),extras(i,10),extras(i,11)); %4
 end
+toc
 
 end

@@ -39,6 +39,7 @@ mu	= viscosity(gas);
 c	= soundspeed(gas);
 M       = ug/c;
 
+
 %% Using gas state, will never be needed again
 
 % Use gas state to get vapor enthalpy at droplet temperature and mole fractions without fuel
@@ -127,7 +128,6 @@ if (rd>1e-3*Rd0 && nu0>0)
     %dTddx = (qd-mdotv*Lv)/(rhod*nu0*4/3*pi*rd^3*Cvd);
     
 else
-    [fd,mdotv,qd,drddx,duddx,dTddx,taum] = deal(0);
     if ( liquid_vaporized_flag == 0)
 	% Dump remaining fuel into gas mixture
 	addedmass = zeros(1,nSpecies(gas));
@@ -137,6 +137,7 @@ else
 	end
     end
     %set(gas,'Y',Y_new);
+    [rd,fd,mdotv,qd,drddx,duddx,dTddx,taum] = deal(0);
 
     liquid_vaporized_flag = 1;
 end 
@@ -183,10 +184,19 @@ dydx = [dTgdx; drhogdx; dugdx; dTddx; duddx; drddx; dYgdx];
 
 % Extra data for postprocessing
 if (extras_flag)
-	tauR_OF = 0;
+	% Pyjac 
+	send_data = "inverse_jacobian_timescale.py ";
+	send_data = [send_data string(temperature(gas)) " "];
+	send_data = [send_data string(pressure(gas)) " "];
+	mf = massFractions(gas);
+	for sp=1:nSpecies(gas)
+		send_data = [send_data string(mf(sp)) " "];
+	end
+	ReacTimescales = pyrunfile(char(send_data),"ReacTscales");
+ 
+
 	HRR = -netProdRates(gas)'*enthalpies_RT(gas)*gasconstant*Tg;
 	nCtot=0;nHtot=0;nOtot=0;
-	%stoich_coefficients = stoich_r(gas);
 	for i=1:nSpecies(gas)
 		X = moleFraction(gas,speciesName(gas,i));
 		nC = nAtoms(gas,i,'C');
@@ -197,14 +207,20 @@ if (extras_flag)
 		nOtot = nOtot + nO * X;
 	end
 	ER = (2*nCtot+0.5*nHtot)/nOtot; % TODO verify
+
 	volume_frac = nd*4/3*pi*rd^3;
 	droploading = 1/(1+rhog*Yg(fuel_index)/(volume_frac*rhod));
-	ReacFuelCons = omega(fuel_index)*wf;
-	VaporFuelProd = mdotv*(Ydk(fuel_index)-Yg(fuel_index));
-	DiffTau = rd^2/max(mixDiffCoeffs(gas));
-	VaporTau = taum;
-	TimeForVapor1kg = taum/(4/3*pi*rd^3*rhod*nd);
-	extras = [HRR, P, mdotv, ER, ReacFuelCons, VaporFuelProd, DiffTau, VaporTau, TimeForVapor1kg]; % ode solver will ignore but can be used for postprocessing
+	DiffTau = Rd0^2/max(mixDiffCoeffs(gas));
+	if (liquid_vaporized_flag)
+		VaporTau = 0;
+	else
+		VaporTau = taum;
+    end
+    % ode solver will ignore but can be used for postprocessing
+	extras = [HRR, P, mdotv, ER, DiffTau, VaporTau, ...
+        ReacTimescales{1},ReacTimescales{2},ReacTimescales{3},...
+        ReacTimescales{4},ReacTimescales{5}]; 
+
 end
 
 end

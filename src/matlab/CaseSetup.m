@@ -2,19 +2,19 @@ classdef CaseSetup %% Here you can define parameters for your case
 	properties(Constant)
 
 	% Flag defines what you would like your case to do:
-	% 1 = iterate the eigenvalue solution to obtain SS detonation velocity
+	% 1 = iterate the eigenvalue solution to obtain SS detonation velocity according to the generalized CJ criterion
 	% 2 = take provided velocity and calculate detonation structure (may not be SS ZND solution)
 	% 3 = take provided velocity and obtain steady state drag coefficient
 
 	funcflag = 2;
 
 	% Most common parameters
-	U0 	= 1810.41; 	% Detonation velocity (treated differently based on funcflag)
+	U0 	= 1800; 	% Detonation velocity (treated differently based on funcflag)
 	phi     = 1.0;		% equivalence ratio
 	Cdw     = 0.00;		% wall drag coefficient
 	Chw     = 0.00;		% wall heat loss coefficient
 	Rd0     = 5e-6; 	% drop Radius
-	alpha   = 1-0.0004777070063694268;		% droplet loading (kg liquid fuel/kg total fuel)
+	alpha   = 1;		% droplet loading (kg liquid fuel/kg total fuel)
 	T0      = 298;		% initial temp (K)
 	P0      = 100000;	% initial pressure (pa)
 	fuel    = 'NC12H26';     % Change below parameters if this changes
