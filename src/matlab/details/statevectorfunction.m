@@ -3,6 +3,11 @@ function [dydx,extras] = statevectorfunction(t,y,vars,extras_flag)
 % Unpacking evolution values
 Tg = y(1); rhog = y(2); ug = y(3); Td = y(4); ud = y(5); rd = y(6);
 Yg = y(7:end);
+
+% Ensure droplet T is below critical point
+if (Td>658.2) 
+	Td=658.2;
+end
  
 [~, ~, Cdw, Chw, Rd0, l_char, Pr, Le, Tw, ~, rhod, nu0, D,...
     lam, ~, ~, fuel, ~, ~, ~, gas, satpressure, latheat, dropCv] = vars{1:end};

@@ -93,12 +93,11 @@ rmpath('details');
 
 filename = sprintf("spray_R%.2e_T%.2f_P%.2f_Phi%.2f_%s.dat",Rd0,T0,P0,phi,fuel);
 fileout = fopen(filename,'w');
-fprintf(fileout,"X[m] Tg[K] Pg[Pa] Rhog[kg/m^3] Rd[m] Yf Ug[m/s] HRR ER ReacMassConsump[kg/m^3/s] VaporMassProd[kg/m^3/s] DiffTimescale[s] VaporTimescale[s] TimeReqdToVap1kg[s/kg]\n");
+fprintf(fileout,"X[m] gas_temp[K] gas_pressure[Pa] gas_density[kg/m^3] Drop_rad[m] fuel_mass_fraction gas_velocity[m/s] HRR[W/m^3] drop_temp[K] drop_velocity[m/s]\n");
 for i=1:length(x)
-	fprintf(fileout,"%.10f %f %f %f %e %e %f %e %f %e %f %e %e %e\n",...
+	fprintf(fileout,"%.10f %f %f %f %e %e %f %e %e %f\n",...
 		x(i),y(i,1),extras(i,2),y(i,2),y(i,6),y(i,6+29),y(i,3),...
-		extras(i,1),extras(i,4),extras(i,5),extras(i,6),extras(i,7),...
-		extras(i,8),extras(i,9));
+		extras(i,1),y(i,4),y(i,5));
 end
 
 end
