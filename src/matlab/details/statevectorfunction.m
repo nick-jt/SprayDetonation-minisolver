@@ -210,7 +210,8 @@ if (extras_flag)
 
 	volume_frac = nd*4/3*pi*rd^3;
 	droploading = 1/(1+rhog*Yg(fuel_index)/(volume_frac*rhod));
-	DiffTau = Rd0^2/max(mixDiffCoeffs(gas));
+	delta_r = 0.554*nd^(-1/3); % mean distance between droplets
+	DiffTau = delta_r^2/min(mixDiffCoeffs(gas));
 	if (liquid_vaporized_flag)
 		VaporTau = 0;
 	else
