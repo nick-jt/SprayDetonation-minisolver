@@ -28,3 +28,8 @@ plot(x,y(:,1))
 CaseSetup.m contains most of the relevant parameters for your detonation. Change equivalence ratio, droplet loading, droplet diameter, external loss coefficients, initial conditions, etc...
 
 The `funcflag` in CaseSetup.m defines the solution method for the detonation. SprayDet_Dodecane.m then will begin the bracketing method iteration by calling the respective matlab file. bracketMethodCDW.m file iterates to determine the drag coefficient for a given detonation velocity (may be used to capture both stable and unstable solutions of the detonation velocity vs loss curve). You may also use getSSvelocity.m to iterate for the detonation steady state velocity given case conditions, including heat and friction wall loss coefficients.
+
+
+## References
+Please cite: 
+https://doi.org/10.2514/6.2022-0395
