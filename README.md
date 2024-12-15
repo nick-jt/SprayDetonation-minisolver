@@ -32,4 +32,9 @@ The `funcflag` in CaseSetup.m defines the solution method for the detonation. Sp
 
 ## References
 Please cite: 
-https://doi.org/10.2514/6.2022-0395
+[Tricard, N., & Zhao, X., “One dimensional modeling of spray detonations considering loss effects,” AIAA SCITECH 2022
+Forum, San Diego, CA, USA, January 3-9 (2022).](https://doi.org/10.2514/6.2022-0395)
+
+[Tricard, N., Ghosh, A., Dammati, S. S., Poludnenko, A., & Zhao, X., “Steady and transient one-dimensional simulations of
+multiphase dodecane/air detonations,” International Colloquium on the Dynamics of Explosions and Reactive Systems
+(ICDERS), Naples, Italy, June 19-24 (2022).](https://scholar.google.com/citations?view_op=view_citation&hl=en&user=jPl61hUAAAAJ&citation_for_view=jPl61hUAAAAJ:u-x6o8ySG0sC)
