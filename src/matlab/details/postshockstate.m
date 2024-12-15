@@ -7,7 +7,7 @@ function gas = postshockstate( U0, Pg0, Tg0, q, mech )
        u1 = U0;
        h1 = enthalpy_mass(gas);
        
-       rho2 = 5;
+       rho2 = rho1*1.5;
        rho2_prev = 4;
        
        while abs(rho2-rho2_prev)>1e-4*rho2
