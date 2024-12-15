@@ -1,7 +1,9 @@
 # SprayDetonation-minisolver
 A multi-phase ZND detonation solver. 
 
-## Testing
+## Setting up and Running
+There are three versions available: MATLAB, Jupyter, and Python versions. The MATLAB version is the most reliable because of the resilience of the ode15s integrator. The Python are Jupyter versions are essentially identical.
+
 To test, start MATLAB and run the following code.
 ```
 cd SprayDetonation-minisolver/src/matlab
